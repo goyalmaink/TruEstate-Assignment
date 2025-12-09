@@ -57,7 +57,7 @@ interface ApiResponse {
   };
 }
 
-const API_BASE_URL = 'https://tru-estate-assignment-tau.vercel.app/';
+const API_BASE_URL = 'https://tru-estate-assignment-tau.vercel.app';
 
 interface AgeFilterProps {
   selectedFilters: { ageMin: string; ageMax: string;[key: string]: any };
