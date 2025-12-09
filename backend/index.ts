@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
+// import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import salesRoutes from './routes/sales.routes.js';
@@ -11,7 +11,7 @@ dotenv.config();
 const app: Application = express();
 const PORT = 8000;
 
-app.use(helmet()); 
+// app.use(helmet()); 
 app.use(cors()); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
