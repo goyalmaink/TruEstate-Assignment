@@ -38,9 +38,22 @@ async function seedDatabase() {
         console.log('🌱 Starting database seed for large dataset...');
         console.log('⏱️  This may take several minutes...');
 
-        console.log('🗑️  Clearing existing data...');
-        const deleteResult = await prisma.sales.deleteMany({});
-        console.log(`✅ Cleared ${deleteResult.count} existing records`);
+        console.log('🗑️  Clearing half of existing data...');
+
+        const totalCount = await prisma.sales.count();
+        const halfCount = Math.floor(totalCount / 2);
+        const recordsToDelete = await prisma.sales.findMany({
+            skip: halfCount,
+            take: totalCount - halfCount,
+            select: { id: true }
+        });
+
+        const idsToDelete = recordsToDelete.map(r => r.id);
+
+        const deleteResult = await prisma.sales.deleteMany({
+            where: { id: { in: idsToDelete } }
+        });
+        console.log(`✅ Cleared ${deleteResult.count} records (half of ${totalCount} total)`);
 
         let transactions: any[] = [];
         let totalInserted = 0;
@@ -167,5 +180,44 @@ async function seedDatabase() {
         process.exit(1);
     }
 }
+async function deleteHalfData() {
+    try {
+        console.log('🌱 Starting to delete half of the existing data...')
+        console.log('⏱️  This may take several minutes...')
+        const totalCount = await prisma.sales.count();
+        const halfCount = Math.floor(totalCount / 2);
 
-seedDatabase();
+        const recordsToDelete = await prisma.sales.findMany({
+            skip: halfCount,
+            take: totalCount - halfCount,
+            select: { id: true }
+        });
+
+        const idsToDelete = recordsToDelete.map(r => r.id);
+        const batch = 10000
+        let deleted = 0
+        for (let i = 0; i < idsToDelete.length; i += batch) {
+            const batchIds = idsToDelete.slice(i, i + batch);
+            const result = await prisma.sales.deleteMany({
+                where: { id: { in: batchIds } }
+            });
+
+            deleted += result.count
+            console.log(`✅ Deleted ${deleted} records (half of ${totalCount} total)`);
+        }
+
+
+
+    }
+
+    catch (error) {
+        console.error('❌ Deletion failed:', error);
+        await prisma.$disconnect();
+        process.exit(1);
+
+
+    }
+}
+deleteHalfData();
+
+// seedDatabase();

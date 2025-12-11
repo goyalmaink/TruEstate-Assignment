@@ -1,5 +1,3 @@
-// backend/src/types/sales.types.ts
-
 import type { Sales } from '../generated/prisma/client.js';
 
 export interface SalesQueryParams {
