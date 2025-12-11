@@ -53,7 +53,7 @@ async function seedDatabase() {
         const deleteResult = await prisma.sales.deleteMany({
             where: { id: { in: idsToDelete } }
         });
-        console.log(`✅ Cleared ${deleteResult.count} records (half of ${totalCount} total)`);
+        console.log(`Cleared ${deleteResult.count} records (half of ${totalCount} total)`);
 
         let transactions: any[] = [];
         let totalInserted = 0;
@@ -129,17 +129,17 @@ async function seedDatabase() {
                             const rate = Math.round(totalInserted / (Date.now() - startTime) * 1000);
                             const progress = ((totalInserted / 1000000) * 100).toFixed(1);
 
-                            console.log(`✅ Progress: ${progress}% | Inserted: ${totalInserted.toLocaleString()}/1,000,000 | Rate: ${rate}/sec | Time: ${elapsed}s`);
+                            console.log(`Progress: ${progress}% | Inserted: ${totalInserted.toLocaleString()}/1,000,000 | Rate: ${rate}/sec | Time: ${elapsed}s`);
 
                             transactions = [];
                         } catch (error) {
-                            console.error(`❌ Error inserting batch:`, error);
+                            console.error(`Error inserting batch:`, error);
                         }
 
                         stream.resume();
                     }
                 } catch (error) {
-                    console.error(`❌ Error parsing row ${totalParsed}:`, error);
+                    console.error(`Error parsing row ${totalParsed}:`, error);
                 }
             })
             .on('end', async () => {
@@ -152,9 +152,9 @@ async function seedDatabase() {
                             data: transactions,
                         });
                         totalInserted += transactions.length;
-                        console.log(`✅ Inserted final batch: ${transactions.length} records`);
+                        console.log(`Inserted final batch: ${transactions.length} records`);
                     } catch (error) {
-                        console.error(`❌ Error inserting final batch:`, error);
+                        console.error(`Error inserting final batch:`, error);
                     }
                 }
 
@@ -170,20 +170,20 @@ async function seedDatabase() {
                 process.exit(0);
             })
             .on('error', (error) => {
-                console.error('❌ Error reading CSV:', error);
+                console.error('Error reading CSV:', error);
                 process.exit(1);
             });
 
     } catch (error) {
-        console.error('❌ Seeding failed:', error);
+        console.error('Seeding failed:', error);
         await prisma.$disconnect();
         process.exit(1);
     }
 }
 async function deleteHalfData() {
     try {
-        console.log('🌱 Starting to delete half of the existing data...')
-        console.log('⏱️  This may take several minutes...')
+        console.log('Starting to delete half of the existing data...')
+        console.log('This may take several minutes...')
         const totalCount = await prisma.sales.count();
         const halfCount = Math.floor(totalCount / 2);
 
@@ -203,7 +203,7 @@ async function deleteHalfData() {
             });
 
             deleted += result.count
-            console.log(`✅ Deleted ${deleted} records (half of ${totalCount} total)`);
+            console.log(`Deleted ${deleted} records (half of ${totalCount} total)`);
         }
 
 
@@ -211,7 +211,7 @@ async function deleteHalfData() {
     }
 
     catch (error) {
-        console.error('❌ Deletion failed:', error);
+        console.error('Deletion failed:', error);
         await prisma.$disconnect();
         process.exit(1);
 
